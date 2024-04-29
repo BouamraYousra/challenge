@@ -1,65 +1,81 @@
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { Form, Modal, Button } from 'react-bootstrap';
+
+import Card from '@mui/material/Card';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+
+import Iconify from 'src/components/iconify';
 
 
-const AddTaskPopup = ({ show, handleClose }) => {
-  const [taskInfo, setTaskInfo] = useState({
-    status: false,
-    content: ''
-  });
+export default function AddTaskPopup() {
+  const [open, setOpen] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTaskInfo({ ...taskInfo, [name]: value });
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle submitting the task data, e.g., send it to the backend
-    // Then, close the popup
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+   
     handleClose();
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Add New Task</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="status">
-            <Form.Check
-              type="checkbox"
-              label="Status"
-              name="status"
-              checked={taskInfo.status}
-              onChange={handleChange}
-            />
-          </Form.Group>
-          <Form.Group controlId="content">
-            <Form.Label>Content</Form.Label>
-            <Form.Control
-              type="text"
-              name="content"
-              value={taskInfo.content}
-              onChange={handleChange}
-              placeholder="Task Content"
-            />
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-      </Modal.Body>
-    </Modal>
+    <>
+
+    <Card 
+    sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      padding:3,
+      marginBottom:5,
+    }}> 
+        <Typography variant="h4">Tasks</Typography>
+        <Button variant="contained" onClick={handleClickOpen} color="inherit" startIcon={<Iconify icon="eva:plus-fill" />} align="right">
+          New Task
+        </Button>
+      </Card>
+    
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          component: 'form',
+          onSubmit: handleSubmit,
+        }}
+      >
+        <DialogTitle>New Task </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Give informations about your task
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="content"
+            name="content"
+            label="Task"
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Close</Button>
+          <Button type="submit">Submit</Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
-};
-
-// Prop types validation
-AddTaskPopup.propTypes = {
-  show: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired
-};
-
-export default AddTaskPopup;
+}
