@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import { tasks } from 'src/_mock/task';
 
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import AddTaskPopup from 'src/components/AddTaskPopup';
 
@@ -29,7 +26,6 @@ export default function UserPage() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [showAddTaskPopup, setShowAddTaskPopup] = useState(false);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -88,18 +84,10 @@ export default function UserPage() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  const handleShowAddTaskPopup = () => setShowAddTaskPopup(true);
-  const handleCloseAddTaskPopup = () => setShowAddTaskPopup(false);
-
   return (
     <Container>
-      <Card>
-        <Typography variant="h4">Tasks</Typography>
-        <Button variant="contained" onClick={handleShowAddTaskPopup} color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Task
-        </Button>
-      </Card>
-      <AddTaskPopup show={showAddTaskPopup} handleClose={handleCloseAddTaskPopup} />
+      
+      <AddTaskPopup/>
 
       <Card>
         <UserTableToolbar
