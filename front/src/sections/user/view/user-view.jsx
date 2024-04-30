@@ -35,19 +35,19 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = tasks.map((task) => task.name);
+      const newSelecteds = tasks.map((task) => task.content);
       setSelected(newSelecteds);
     } else {
       setSelected([]);
     }
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, content,status) => {
+    const selectedIndex = selected.indexOf(content);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = [...selected, name];
+      newSelected = [...selected, content];
     } else if (selectedIndex === 0) {
       newSelected = selected.slice(1);
     } else if (selectedIndex === selected.length - 1) {
@@ -107,7 +107,7 @@ export default function UserPage() {
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'name' },
+                  { id: 'content', label: 'content' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
@@ -118,10 +118,10 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
-                      name={row.name}
+                      content={row.content}
                       status={row.status}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
+                      selected={selected.indexOf(row.content) !== -1}
+                      handleClick={(event) => handleClick(event, row.content)}
                     />
                   ))}
 
