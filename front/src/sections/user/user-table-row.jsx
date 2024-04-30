@@ -17,7 +17,7 @@ import Iconify from 'src/components/iconify';
 
 export default function UserTableRow({
   selected,
-  name,
+  content,
   status,
   handleClick,
 }) {
@@ -31,17 +31,18 @@ export default function UserTableRow({
     setOpen(null);
   };
 
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
+          <Checkbox disableRipple checked={status ==='done'} onChange={handleClick} />
         </TableCell>
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
              <Typography variant="subtitle2" noWrap>
-              {name}
+              {content}
             </Typography>
           </Stack>
         </TableCell>
@@ -82,7 +83,7 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   handleClick: PropTypes.func,
-  name: PropTypes.any,
+  content: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
 };
