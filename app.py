@@ -1,58 +1,91 @@
-#pip install fastapi uvicorn tortoise-orm[mysql] aiomysql
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
-from fastapi import FastAPI
-from tortoise.contrib.fastapi import register_tortoise
-from tests.models import * 
+import Stack from '@mui/material/Stack';
+import Popover from '@mui/material/Popover';
+import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
+import TableCell from '@mui/material/TableCell';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
+import Label from 'src/components/label';
+import Iconify from 'src/components/iconify';
 
-app = FastAPI()
-db_url = "mysql://root:SBlLPuQDkfbdOIoEYaEHWJVYBKQOZcAb@roundhouse.proxy.rlwy.net:32059/railway"
+export default function UserTableRow({
+  selected,
+  content,
+  status,
+  handleClick,
+  handleRowsClick,
+  handleDelete // Add rowIndex as a prop
+}) {
+  const [open, setOpen] = useState(null);
 
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
 
-@app.get('/')
-def index():
-    return {"Msg": "go to /docs for api or /redoc"}
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
 
+  return (
+    <>
+      <TableRow hover tabIndex={-1} status="checkbox" selected={selected}>
+        <TableCell padding="checkbox">
+          <Checkbox disableRipple checked={selected} onChange={handleClick} />
+        </TableCell>
 
-@app.post('/task')
-async def add_task(task_info:task_pydanticIn):
-    task_obj=await Task.create(**task_info.dict(exclude_unset=True))
-    response= await task_pydantic.from_tortoise_orm(task_obj)
-    return {"status":"ok","data":response} 
+        <TableCell component="th" scope="row" padding="none">
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Typography variant="subtitle2" noWrap>
+              {content}
+            </Typography>
+          </Stack>
+        </TableCell>
 
+        <TableCell onClick={handleRowsClick}>
+          <Label color={(status === 'not done' && 'error') || 'success'}>{status}</Label>
+        </TableCell>
 
-@app.get('/task')
-async def get_all_tasks():
-    response=await task_pydantic.from_queryset(Task.all())
-    return {"status":"ok","data":response} 
+        <TableCell align="right">
+          <IconButton onClick={handleOpenMenu}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
+        </TableCell>
+      </TableRow>
 
-@app.get('/task/{task_id}')
-async def get_specific_task(task_id: int):
-    response=await task_pydantic.from_queryset_single(Task.get(id=task_id))
-    return {"status":"ok","data":response} 
+      <Popover
+        open={!!open}
+        anchorEl={open}
+        onClose={handleCloseMenu}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        PaperProps={{
+          sx: { width: 140 },
+        }}
+      >
+        <MenuItem onClick={handleCloseMenu}>
+          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }}  />
+          Edit
+        </MenuItem>
 
+        <MenuItem  onClick={handleDelete} sx={{ color: 'error.main' }}>
+          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }}/>
+          Delete
+        </MenuItem>
+      </Popover>
+    </>
+  );
+}
 
-@app.put('/task/{task_id}')
-async def update_task(task_id: int,update_info:task_pydanticIn):
-    task =await Task.get(id=task_id)
-    update_info=update_info.dict(exclude_unset=True)
-    task.content=update_info['content']
-    task.state=update_info['state']
-    await task.save()
-    response=task_pydantic.from_tortoise_orm(task)
-    return {"status":"ok","data":response} 
-
-@app.delete('/task/{task_id}')
-async def delete_task(task_id:int):
-    await Task.get(id=task_id).delete()
-    return {"status":"ok"} 
-
-    
-
-register_tortoise(
-    app,
-    db_url=db_url,
-    modules={"models": ["tests.models"]},
-    generate_schemas=True,
-    add_exception_handlers=True
-)
+UserTableRow.propTypes = {
+  handleClick: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleRowsClick: PropTypes.func,
+  content: PropTypes.any,
+  selected: PropTypes.bool,
+  status: PropTypes.string,
+};
