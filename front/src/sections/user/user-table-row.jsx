@@ -13,13 +13,13 @@ import IconButton from '@mui/material/IconButton';
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
 export default function UserTableRow({
   selected,
   content,
   status,
   handleClick,
+  handleRowsClick,
+  handleDelete // Add rowIndex as a prop
 }) {
   const [open, setOpen] = useState(null);
 
@@ -31,22 +31,22 @@ export default function UserTableRow({
     setOpen(null);
   };
 
-
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+      <TableRow hover tabIndex={-1} status="checkbox" selected={selected}>
         <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={status ==='done'} onChange={handleClick} />
+          <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
 
         <TableCell component="th" scope="row" padding="none">
           <Stack direction="row" alignItems="center" spacing={2}>
-             <Typography variant="subtitle2" noWrap>
+            <Typography variant="subtitle2" noWrap>
               {content}
             </Typography>
           </Stack>
         </TableCell>
-        <TableCell>
+
+        <TableCell onClick={handleRowsClick}>
           <Label color={(status === 'not done' && 'error') || 'success'}>{status}</Label>
         </TableCell>
 
@@ -68,12 +68,12 @@ export default function UserTableRow({
         }}
       >
         <MenuItem onClick={handleCloseMenu}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }}  />
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
+        <MenuItem  onClick={handleDelete} sx={{ color: 'error.main' }}>
+          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }}/>
           Delete
         </MenuItem>
       </Popover>
@@ -83,7 +83,9 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   handleClick: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleRowsClick: PropTypes.func,
   content: PropTypes.any,
-  selected: PropTypes.any,
+  selected: PropTypes.bool,
   status: PropTypes.string,
 };
